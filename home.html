@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Airfoil Prediction</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .card {
+      background: #fff;
+      padding: 28px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      width: 420px;
+    }
+    h2 { text-align: center; margin-bottom: 20px; color: #1f2937; }
+    label { display: block; margin-top: 12px; margin-bottom: 6px; font-weight: bold; color: #374151; }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background: #2563eb;
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover { background: #1d4ed8; }
+    .result {
+      margin-top: 20px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 18px;
+      color: #16a34a;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Airfoil Model Prediction</h2>
+    <form id="predictForm">
+      <label>Frequency</label>
+      <input type="number" step="any" name="frequency" required>
+
+      <label>Angle of Attack</label>
+      <input type="number" step="any" name="Angle of attack" required>
+
+      <label>Chord Length</label>
+      <input type="number" step="any" name="Chord length" required>
+
+      <label>Free Stream Velocity</label>
+      <input type="number" step="any" name="Free stream velocity" required>
+
+      <label>Suction Side</label>
+      <input type="number" step="any" name="Suction side" required>
+
+      <button type="submit">Predict</button>
+    </form>
+    <div class="result" id="result">Prediction will appear here</div>
+  </div>
+
+  <script>
+    document.getElementById("predictForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const formData = new FormData(e.target);
+      const data = {};
+      formData.forEach((val, key) => data[key] = parseFloat(val));
+
+      const res = await fetch("http://127.0.0.1:5000/predict_api", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: data })
+      });
+
+      const result = await res.json();
+      document.getElementById("result").innerText = "Prediction: " + result.prediction;
+    });
+  </script>
+</body>
+</html>
